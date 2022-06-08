@@ -5,15 +5,15 @@
 
 using namespace std;
 
-// Estructura para hacer la simulaciÛn
+// Estructura para hacer la simulaci√≥n
 struct matrizB
 {
-	int ancho, alto; // Dimensiones de la matrÌz
-	bool** matriz; // La matrÌz
+	int ancho, alto; // Dimensiones de la matr√≠z
+	bool** matriz; // La matr√≠z
 	matrizB(int ancho, int alto) {
 		this->ancho = ancho;
 		this->alto	= alto;
-		// InicializaciÛn de la matrÌz de tamaÒo variable
+		// Inicializaci√≥n de la matr√≠z de tama√±o variable
 		matriz = new bool* [ancho];
 		for (int i = 0; i < ancho; i++) {
 			matriz[i] = new bool[alto];
@@ -27,7 +27,7 @@ struct matrizB
 };
 
 
-// FunciÛn para dibujar en un punto especÌfico de la consola
+// Funci√≥n para dibujar en un punto espec√≠fico de la consola
 void gotoxy(int x, int y) 
 {
 	HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -38,7 +38,7 @@ void gotoxy(int x, int y)
 }
 
 
-// ImpresiÛn de la matrÌz y eliminaciÛn del rastro
+// Impresi√≥n de la matr√≠z y eliminaci√≥n del rastro
 void imprimir_mat(matrizB* mat, bool** aux)
 {
 	for (int i = 0; i < mat->ancho; i++) {
@@ -48,7 +48,7 @@ void imprimir_mat(matrizB* mat, bool** aux)
 				gotoxy(j, i);
 				cout << " ";
 			}
-			// Imprime la posiciÛn actual del punto
+			// Imprime la posici√≥n actual del punto
 			if (aux[i][j]) {
 				gotoxy(j, i);
 				cout << (char)219;
@@ -58,18 +58,18 @@ void imprimir_mat(matrizB* mat, bool** aux)
 }
 
 
-// LÛgica del juego de la vida
+// L√≥gica del juego de la vida
 void logica(matrizB* mat) 
 {
-	// CreaciÛn de una matrÌz auxiliar para poder trabajar la
-	// lÛgica del juego de la vida de manera correcta
+	// Creaci√≥n de una matr√≠z auxiliar para poder trabajar la
+	// l√≥gica del juego de la vida de manera correcta
 	bool** aux = new bool* [mat->ancho];
 	for (int i = 0; i < mat->ancho; i++) {
 		aux[i] = new bool[mat->alto];
 	}
 
 
-	// Aplica la lÛgica de el juego de la vida
+	// Aplica la l√≥gica de el juego de la vida
 	for (int i = 0; i < mat->ancho; i++) {
 		for (int j = 0; j < mat->alto; j++) {
 			// Variable que controla la cantidad de vecinos
@@ -92,7 +92,7 @@ void logica(matrizB* mat)
 				if (mat->matriz[i][j - 1] == 1) {
 					neighbors++;
 				}
-				// Revisa si i es menor que el ancho de la matrÌz
+				// Revisa si i es menor que el ancho de la matr√≠z
 				// para revisar si existen vecinos a la derecha
 				// del punto
 				if (i < mat->alto - 1) {
@@ -110,7 +110,7 @@ void logica(matrizB* mat)
 					neighbors++;
 				}
 			}
-			// Revisa si i es menor que el ancho de la matrÌz
+			// Revisa si i es menor que el ancho de la matr√≠z
 			// para revisar si existen vecinos a la derecha
 			// del punto
 			if (i < mat->ancho - 1) {
@@ -118,7 +118,7 @@ void logica(matrizB* mat)
 					neighbors++;
 				}
 			}
-			// Revisa si j es menor al alto de la matrÌz
+			// Revisa si j es menor al alto de la matr√≠z
 			// para revisar si existen vecinos debajo del punto
 			if (j < mat->alto - 1) {
 				// Revisa si i es mayor a cero para revisar si 
@@ -135,7 +135,7 @@ void logica(matrizB* mat)
 				if (mat->matriz[i][j + 1] == 1) {
 					neighbors++;
 				}
-				// Revisa si i es menor que el ancho de la matrÌz
+				// Revisa si i es menor que el ancho de la matr√≠z
 				// para revisar si existen vecinos a la derecha
 				// del punto
 				if (i < mat->ancho - 1) {
@@ -149,30 +149,30 @@ void logica(matrizB* mat)
 
 			// Condiciones del juego de la vida
 
-			// 3 vecinos y no hay punto entre ellos generar·n
+			// 3 vecinos y no hay punto entre ellos generar√°n
 			// otro punto
 			if (neighbors == 3 && mat->matriz[i][j] == 0) {
 				aux[i][j] = 1;
 			}
-			// 2 o 3 vecinos har·n que el punto se mantenga en su
+			// 2 o 3 vecinos har√°n que el punto se mantenga en su
 			// estado actual
 			else if (neighbors == 2 || neighbors == 3) {
 				aux[i][j] = mat->matriz[i][j];
 			}
-			// Si hay 0, 1 o 4 a m·s vecinos, el punto entre ellos
-			// se borrar·
+			// Si hay 0, 1 o 4 a m√°s vecinos, el punto entre ellos
+			// se borrar√°
 			else if (neighbors == 0 || neighbors == 1 || neighbors >= 4) {
 				aux[i][j] = 0;
 			}
 		}
 	}
 
-	// ImpresiÛn de la matrÌz en su estado luego de la
-	// simulaciÛn, tal que se borra el rastro de su estado anterior
+	// Impresi√≥n de la matr√≠z en su estado luego de la
+	// simulaci√≥n, tal que se borra el rastro de su estado anterior
 	imprimir_mat(mat, aux);
 
 
-	// Reemplazo de la matrÌz de la simulaciÛn con la auxiliar para
+	// Reemplazo de la matr√≠z de la simulaci√≥n con la auxiliar para
 	// actualizar los datos en esta
 	for (int i = 0; i < mat->ancho; i++) {
 		for (int j = 0; j < mat->alto; j++) {
@@ -190,12 +190,12 @@ void actualizar_display(matrizB* mat) {
 
 int main() 
 {
-	// Dimensiones de la simulaciÛn
+	// Dimensiones de la simulaci√≥n
 	int tamanioX = 99;
 	int tamanioY = 99;
 	matrizB* vida = new matrizB(tamanioX, tamanioY);
 
-	// PosiciÛn del cursor
+	// Posici√≥n del cursor
 	int posCursorX = 0, posCursorY = 0;
 
 	while (true) 
@@ -205,25 +205,25 @@ int main()
 			if (GetKeyState(0x25) & 0x8000) // Flecha izquierda 
 			{
 				if (posCursorX > 0) {
-					posCursorX--;	// Se mueve hacia la izquierda si y no es menor que los lÌmites en X
+					posCursorX--;	// Se mueve hacia la izquierda si y no es menor que los l√≠mites en X
 				}
 			}
 			if (GetKeyState(0x27) & 0x8000) // Flecha derecha 
 			{
 				if (posCursorX < tamanioX - 1) {
-					posCursorX++;	// Se mueve hacia la derecha si y no es mayor que los lÌmites en x
+					posCursorX++;	// Se mueve hacia la derecha si y no es mayor que los l√≠mites en x
 				}
 			}
 			if (GetKeyState(0x26) & 0x8000) // Flecha arriba
 			{
 				if (posCursorY > 0) {
-					posCursorY--;	// Se mueve hacia arriba si y no es m·s alto que los lÌmites en y
+					posCursorY--;	// Se mueve hacia arriba si y no es m√°s alto que los l√≠mites en y
 				}
 			}
 			if (GetKeyState(0x28) & 0x8000) //Flecha abajo
 			{
 				if (posCursorY < tamanioX - 1) {
-					posCursorY++;	// Se mueve hacia abajo si y no es m·s bajo que los lÌmites en y
+					posCursorY++;	// Se mueve hacia abajo si y no es m√°s bajo que los l√≠mites en y
 				}
 			}
 			if (GetKeyState('C') & 0x8000) 
@@ -236,15 +236,7 @@ int main()
 			}
 			if (GetKeyState('Q') & 0x8000) 
 			{
-				break; // Empezar simulaciÛn
-			}
-			if (GetKeyState('H') & 0x8000) 
-			{
-				guardar_mat(vida); // Guardar puntos en archivo
-			}
-			if (GetKeyState('G') & 0x8000) 
-			{
-				cargar_mat(vida); // Cargar puntos en archivo
+				break; // Empezar simulaci√≥n
 			}
 			if (GetKeyState('W') & 0x8000) 
 			{
@@ -263,11 +255,11 @@ int main()
 			// Actualizar buffer
 			actualizar_display(vida);
 		}
-		// Empezar simulaciÛn
+		// Empezar simulaci√≥n
 		while (true) {
 			logica(vida);
 			Sleep(50);
-			if (GetKeyState('P') & 0x8000) break; // Pausar simulaciÛn
+			if (GetKeyState('P') & 0x8000) break; // Pausar simulaci√≥n
 		}
 	}
 	return 0;
