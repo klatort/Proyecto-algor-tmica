@@ -67,9 +67,9 @@ void imprimir_mat(matrizB* mat, bool actividad = false)
 	{
 		cout
 			<< "Simulacion pausada\nMover cursor: flechas"
-			<< "\tInsertar punto: 'c'\tInsertar punto: 'v'\t Limpiar simulacion: 'w'"
-			<< "\tIniciar simulacion: 'q'\tSiguiente en pasos: 'p'"
-			<< "\t Cargar simulacion: 'f'\tGuardar simulacion: 'g'\tSalir: escape";
+			<< "\tInsertar punto: 'c'\tInsertar punto: 'v'\tLimpiar simulacion: 'w'"
+			<< "\tIniciar simulacion: 'q'\nSiguiente en pasos: 'p'"
+			<< "\tCargar simulacion: 'f'\tGuardar simulacion: 'g'\tSalir: escape";
 	}
 	else
 	{
@@ -208,7 +208,6 @@ int main()
 	wcscpy_s(cfi.FaceName, L"Consolas");	 // Font
 	// Seteando el font
 	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
-	//SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), { 190, 98 });
 
 	int screenW;
 	int screenH;
@@ -221,6 +220,8 @@ int main()
 	// Dimensiones de la simulación
 	int tamanioX = screenW / 10 - 2; //1920/10 - 2
 	int tamanioY = screenH / 10 - 11; //1080/10 - 11
+	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), { (short)tamanioX, (short)tamanioY });
+	// Cambiando buffer para reducir errores
 
 	menu(tamanioX, tamanioY);
 
