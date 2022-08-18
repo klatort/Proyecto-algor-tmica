@@ -1,7 +1,6 @@
 #include<Windows.h>
 #include<iostream>
 #include<fstream>
-#include<vector>
 #include<conio.h>
 using namespace std;
 
@@ -30,13 +29,8 @@ struct matrizB
 void GetDesktopResolution(int& horizontal, int& vertical)
 {
 	RECT desktop;
-	// Get a handle to the desktop window
 	const HWND hDesktop = GetDesktopWindow();
-	// Get the size of screen to the variable desktop
 	GetWindowRect(hDesktop, &desktop);
-	// The top left corner will have coordinates (0,0)
-	// and the bottom right corner will have coordinates
-	// (horizontal, vertical)
 	horizontal = desktop.right;
 	vertical = desktop.bottom;
 }
@@ -53,7 +47,7 @@ void gotoxy(int x, int y)
 
 
 // Impresión de la matríz y eliminación del rastro
-void imprimir_mat(matrizB* mat)
+void imprimir_mat(matrizB* mat, bool actividad = false)
 {
 	string aux;
 	gotoxy(0, 0);
@@ -69,6 +63,19 @@ void imprimir_mat(matrizB* mat)
 		aux += '\n';
 	}
 	cout << aux;
+	if (!actividad)
+	{
+		cout 
+			<< "Simulacion pausada\nMover cursor: flechas"
+			<< "\tInsertar punto: 'c'\tInsertar punto: 'v'\t Limpiar simulacion: 'w'"
+			<< "\tIniciar simulacion: 'q'\tSiguiente en pasos: 'p'"
+			<< "\t Cargar simulacion: 'f'\tGuardar simulacion: 'g'\tSalir: escape";
+	}
+	else
+	{
+		cout
+			<< "Simulacion corriendo\nPausar simulacion: 'p'\tSalir: escape";
+	}
 }
 
 
@@ -85,107 +92,45 @@ void logica(matrizB* mat)
 		}
 	}
 
-
 	// Aplica la lógica de el juego de la vida
-	for (int i = 0; i < mat->alto; i++) {
-		for (int j = 0; j < mat->ancho; j++) {
+
+	for (int i = 1; i < mat->alto - 1; i++) {
+		for (int j = 1; j < mat->ancho - 1; j++) {
 			// Variable que controla la cantidad de vecinos
 			// alrededor de un punto
-			int neighbors = 0;
+			int neighbours = 0;
 
-			// Revisa si i es mayor a cero para revisar si 
-			// existen vecinos arriba del punto
-			if (i > 0) {
-				// Revisa si j es mayor a cero para revisar si 
-				// existen vecinos a la izquierda del punto
-				if (j > 0) {
-					// Revisa si hay un vecino en la diagonal
-					// superior izquierda del punto
-					if (mat->matriz[i - 1][j - 1] == 1) {
-						neighbors++;
-					}
-				}
-				// Revisa si existe un vecino arriba del punto
-				if (mat->matriz[i - 1][j] == 1) {
-					neighbors++;
-				}
-				// Revisa si j es menor que el ancho de la matríz
-				// para revisar si existen vecinos a la derecha
-				// del punto
-				if (j < mat->ancho - 1) {
-					// Revisa que haya un vecino en la diagonal
-					// superior derecha del punto
-					if (mat->matriz[i - 1][j + 1] == 1) {
-						neighbors++;
-					}
-				}
-			}
-			// Revisa si j es mayor a cero para revisar si 
-			// existen vecinos a la izquierda del punto
-			if (j > 0) {
-				if (mat->matriz[i][j - 1] == 1) {
-					neighbors++;
-				}
-			}
-			// Revisa si j es menor que el ancho de la matríz
-			// para revisar si existen vecinos a la derecha
-			// del punto
-			if (j < mat->ancho - 1) {
-				if (mat->matriz[i][j + 1] == 1) {
-					neighbors++;
-				}
-			}
-			// Revisa si i es menor al alto de la matríz
-			// para revisar si existen vecinos debajo del punto
-			if (i < mat->alto - 1) {
-				// Revisa si j es mayor a cero para revisar si 
-				// existen vecinos a la izquierda del punto
-				if (j > 0) {
-					// Revisa si hay un vecino en la diagonal
-					// inferior izquierda del punto
-					if (mat->matriz[i + 1][j - 1] == 1) {
-						neighbors++;
-					}
-				}
-				// Revisa si existe un vecino debajo del
-				// punto
-				if (mat->matriz[i + 1][j] == 1) {
-					neighbors++;
-				}
-				// Revisa si j es menor que el ancho de la matríz
-				// para revisar si existen vecinos a la derecha
-				// del punto
-				if (j < mat->ancho - 1) {
-					// Revisa si hay un vecino en la diagonal
-					// inferior derecha del punto
-					if (mat->matriz[i + 1][j + 1] == 1) {
-						neighbors++;
-					}
-				}
-			}
+			if (mat->matriz[i - 1][j - 1] == 1) neighbours++;
+			if (mat->matriz[i - 1][j] == 1)		neighbours++;
+			if (mat->matriz[i - 1][j + 1] == 1)	neighbours++;
+			if (mat->matriz[i][j - 1] == 1)		neighbours++;
+			if (mat->matriz[i][j + 1] == 1)		neighbours++;
+			if (mat->matriz[i + 1][j - 1] == 1) neighbours++;
+			if (mat->matriz[i + 1][j] == 1)		neighbours++;
+			if (mat->matriz[i + 1][j + 1] == 1) neighbours++;
 
 			// Condiciones del juego de la vida
 
 			// 3 vecinos y no hay punto entre ellos generarán
 			// otro punto
-			if (neighbors == 3 && mat->matriz[i][j] == 0) {
+			if (neighbours == 3 && mat->matriz[i][j] == 0) {
 				aux[i][j] = 1;
 			}
 			// 2 o 3 vecinos harán que el punto se mantenga en su
 			// estado actual
-			else if (neighbors == 2 || neighbors == 3) {
+			else if (neighbours == 2 || neighbours == 3) {
 				aux[i][j] = mat->matriz[i][j];
 			}
 			// Si hay 0, 1 o 4 a más vecinos, el punto entre ellos
 			// se borrará
-			else if (neighbors == 0 || neighbors == 1 || neighbors >= 4) {
+			else if (neighbours == 0 || neighbours == 1 || neighbours >= 4) {
 				aux[i][j] = 0;
 			}
 		}
 	}
 	// Impresión de la matríz en su estado luego de la
 	// simulación, tal que se borra el rastro de su estado anterior
-	imprimir_mat(mat);
+	imprimir_mat(mat, true);
 	// Reemplazo de la matríz de la simulación con la auxiliar para
 	// actualizar los datos en esta
 	for (int i = 0; i < mat->alto; i++) {
@@ -204,47 +149,64 @@ void actualizar_display(matrizB* mat) {
 	cout << (char)1;
 }
 
+// Guardar en un archivo lo que se tenga dibujado en la simulación
 void guardar_mat(matrizB* mat) {
 	ofstream output_file("drawing.txt");
-	for (int i = 0; i < mat->alto; i++) {
-		for (int j = 0; j < mat->ancho; j++) {
+	for (int i = mat->offSet / 2; i < mat->alto - mat->offSet / 2; i++) {
+		for (int j = mat->offSet / 2; j < mat->ancho - mat->offSet / 2; j++) {
 			output_file << mat->matriz[i][j];
 		}
 	}
 }
 
+// Cargar el archivo que se guardó
 void cargar_mat(matrizB* mat) {
 	ifstream load("drawing.txt");
 	string aux;
 	load >> aux;
-	for (int i = 0; i < mat->alto; i++) {
-		for (int j = 0; j < mat->ancho; j++) {
-			if (i * mat->ancho + j < aux.length()) 
+	for (int i = mat->offSet / 2; i < mat->alto - mat->offSet / 2; i++) {
+		for (int j = mat->offSet / 2; j < mat->ancho - mat->offSet / 2; j++) {
+			if ((i - mat->offSet / 2) * 
+				(mat->ancho - mat->offSet) + 
+				(j - mat->offSet / 2) < aux.length())
 			{
-				mat->matriz[i][j] = (int)aux.at(i * mat->ancho + j) - 48;
-			}
-			else {
-				mat->matriz[i][j] = 0;
+				mat->matriz[i][j] = 
+						(int)aux.at((i - mat->offSet / 2) * 
+						(mat->ancho - mat->offSet) + 
+						(j - mat->offSet / 2)) - 48;
 			}
 		}
 	}
 }
+
+//Menu con indicaciones
+void menu(int w, int h)
+{
+	gotoxy(w / 2 - 14, 0);
+	cout << "Bienvenido al simulador del";
+	gotoxy(w / 2 - 14, 1);
+	cout 
+		<< "juego de la vida de Conway\n"
+		<< "Las reglas del juego son:\n"
+		<< "Cada punto blanco es una vida, esta puede tener mas vidas alrededor que seran sus vecinos\n"
+		<< "Si un punto tiene 3 vecinos y no existe algo en dicho punto, se creara vida\n"
+		<< "Si hay 2 o 3 vecinos cerca de un punto, este mantendra la vida que tenga\n"
+		<< "Si hay 0, 1, 4 o mas vecinos, se terminara con la vida en dicho punto\n"
+		<< "La cara feliz que se ve en la pantalla es el centro de la simulacion";
+	_getch();
+}
+
 int main() 
 {
-	//CONSOLE_SCREEN_BUFFER_INFO csbi;
-	//GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-	//int tamanioX = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-	//int tamanioY = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-	HWND hWnd = GetConsoleWindow();
-	ShowWindow(hWnd, SW_SHOWMAXIMIZED);
 	CONSOLE_FONT_INFOEX cfi;
 	cfi.cbSize = sizeof(cfi);
 	cfi.nFont = 0;
-	cfi.dwFontSize.X = 10;                   // Width of each character in the font
-	cfi.dwFontSize.Y = 10;                  // Height
+	cfi.dwFontSize.X = 10;                   // Ancho de caracter
+	cfi.dwFontSize.Y = 10;                   // Alto de caracter
 	cfi.FontFamily = FF_DONTCARE;
 	cfi.FontWeight = FW_NORMAL;
-	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
+	wcscpy_s(cfi.FaceName, L"Consolas");	 // Font
+	// Seteando el font
 	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
 	//SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), { 190, 98 });
 
@@ -252,23 +214,18 @@ int main()
 	int screenH;
 
 	GetDesktopResolution(screenW, screenH);
-	cout << screenH << " " << screenW;
-	_getch();
+
+	HWND hWnd = GetConsoleWindow();
+	ShowWindow(hWnd, SW_SHOWMAXIMIZED);		 // Ventana maximizada
 
 	// Dimensiones de la simulación
 	int tamanioX = screenW / 10 - 2; //1920/10 - 2
-	int tamanioY = screenH / 10 - 10; //1080/10 - 6
-	int infinity = 200;
+	int tamanioY = screenH / 10 - 11; //1080/10 - 11
+
+	menu(tamanioX, tamanioY);
+
+	int infinity = 100;
 	matrizB* vida = new matrizB(tamanioX, tamanioY, infinity);
-	for (int i = 0; i < 190; i++) {
-		for (int j = 0; j < 98; j++) {
-			gotoxy(i, j);
-			cout << (char)219;
-		}
-	}
-	_getch();
-	//while (true) { i++; if (i > 9) { i = 1; } cout << i << " "; }
-	// Posición del cursor
 	int posCursorX = 0, posCursorY = 0;
 
 	while (true) 
@@ -301,21 +258,26 @@ int main()
 			}
 			if (GetKeyState('C') & 0x8000) 
 			{
-				vida->matriz[posCursorY + vida->offSet / 2][posCursorX + vida->offSet / 2] = true; // Colocar punto
+				vida->matriz
+					[posCursorY + vida->offSet / 2]
+					[posCursorX + vida->offSet / 2] = true; // Colocar punto
 			}
 			if (GetKeyState('V') & 0x8000) 
 			{
-				vida->matriz[posCursorY + vida->offSet / 2][posCursorX + vida->offSet / 2] = false; // Quitar punto
+				vida->matriz
+					[posCursorY + vida->offSet / 2]
+					[posCursorX + vida->offSet / 2] = false; // Quitar punto
 			}
 			if (GetKeyState('Q') & 0x8000) 
 			{
+				system("cls");
 				break; // Empezar simulación
 			}
-			if (GetKeyState('H') & 0x8000) 
+			if (GetKeyState('G') & 0x8000) 
 			{
 				guardar_mat(vida); // Guardar puntos en archivo
 			}
-			if (GetKeyState('G') & 0x8000) 
+			if (GetKeyState('F') & 0x8000) 
 			{
 				cargar_mat(vida); // Cargar puntos en archivo
 			}
@@ -327,7 +289,11 @@ int main()
 			}
 			if (GetKeyState('P') & 0x8000)
 			{
-				logica(vida);
+				logica(vida); //Avanzar un paso
+			}
+			if (GetKeyState(VK_ESCAPE) & 0x8000)
+			{
+				return 0; //Salir del programa
 			}
 			// Mostrar puntero para ubicarse en la consola
 			gotoxy(posCursorX, posCursorY);
@@ -345,6 +311,7 @@ int main()
 			logica(vida);
 			Sleep(50);
 			if (GetKeyState('P') & 0x8000) break; // Pausar simulación
+			if (GetKeyState(VK_ESCAPE) & 0x8000) return 0; //Salir del programa
 		}
 	}
 	return 0;
