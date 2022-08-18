@@ -192,7 +192,7 @@ void menu(int w, int h)
 		<< "Si un punto tiene 3 vecinos y no existe algo en dicho punto, se creara vida\n"
 		<< "Si hay 2 o 3 vecinos cerca de un punto, este mantendra la vida que tenga\n"
 		<< "Si hay 0, 1, 4 o mas vecinos, se terminara con la vida en dicho punto\n"
-		<< "La cara feliz que se ve en la pantalla es el centro de la simulacion";
+		<< "La cara feliz que se ve en la pantalla es el centro de la simulacion\n";
 	system("pause");
 }
 
