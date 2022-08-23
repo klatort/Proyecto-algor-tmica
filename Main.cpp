@@ -1,7 +1,7 @@
 #include<Windows.h>
 #include<iostream>
 #include<fstream>
-#include<conio.h>
+
 using namespace std;
 
 // Estructura para hacer la simulación
@@ -10,7 +10,8 @@ struct matrizB
 	int ancho, alto;	// Dimensiones de la matríz
 	int offSet;			// Regula la impresión para que sea infinita
 	bool** matriz;		// La matríz
-	matrizB(int ancho, int alto, int offSet) {
+	matrizB(int ancho, int alto, int offSet) 
+	{
 		this->offSet = offSet;
 		this->ancho = ancho + offSet;
 		this->alto = alto + offSet;
@@ -35,6 +36,8 @@ void GetDesktopResolution(int& horizontal, int& vertical)
 	vertical = desktop.bottom;
 }
 
+//////////////////////////Graficos///////////////////////////////////
+
 // Función para dibujar en un punto específico de la consola
 void gotoxy(int x, int y)
 {
@@ -49,25 +52,23 @@ void gotoxy(int x, int y)
 // Impresión de la matríz y eliminación del rastro
 void imprimir_mat(matrizB* mat, bool actividad = false)
 {
-	string aux;
+	string auxPrint;
 	gotoxy(0, 0);
 	for (int i = mat->offSet / 2; i < mat->alto - (mat->offSet / 2); i++) {
 		for (int j = mat->offSet / 2; j < mat->ancho - (mat->offSet / 2); j++) {
 			if (mat->matriz[i][j] == 1)
-				aux += (char)219;
+				auxPrint += (char)219;
 			else if (mat->matriz[i][j] == 0)
-				aux += ' ';
-			else
-				aux += (char)2;
+				auxPrint += ' ';
 		}
-		aux += '\n';
+		auxPrint += '\n';
 	}
-	cout << aux;
+	cout << auxPrint;
 	if (!actividad)
 	{
 		cout
 			<< "Simulacion pausada\nMover cursor: flechas"
-			<< "\tInsertar punto: 'c'\tInsertar punto: 'v'\tLimpiar simulacion: 'w'"
+			<< "\tInsertar punto: 'c'\tQuitar punto: 'v'\tLimpiar simulacion: 'w'"
 			<< "\tIniciar simulacion: 'q'\nSiguiente en pasos: 'p'"
 			<< "\tCargar simulacion: 'f'\tGuardar simulacion: 'g'\tSalir: escape";
 	}
@@ -78,6 +79,33 @@ void imprimir_mat(matrizB* mat, bool actividad = false)
 	}
 }
 
+// Actualizar el display y dibujar una carita al centro del mismo
+void actualizar_display(matrizB* mat) {
+	imprimir_mat(mat);
+	int x = (mat->ancho - mat->offSet) / 2;
+	int y = (mat->alto - mat->offSet) / 2;
+	gotoxy(x, y);
+	cout << (char)1;
+}
+
+//Menu con indicaciones
+void menu(int w, int h)
+{
+	gotoxy(w / 2 - 14, 0);
+	cout << "Bienvenido al simulador del";
+	gotoxy(w / 2 - 14, 1);
+	cout
+		<< "juego de la vida de Conway\n"
+		<< "Las reglas del juego son:\n"
+		<< "Cada punto blanco es una vida, esta puede tener mas vidas alrededor que seran sus vecinos\n"
+		<< "Si un punto tiene 3 vecinos y no existe algo en dicho punto, se creara vida\n"
+		<< "Si hay 2 o 3 vecinos cerca de un punto, este mantendra la vida que tenga\n"
+		<< "Si hay 0, 1, 4 o mas vecinos, se terminara con la vida en dicho punto\n"
+		<< "La cara feliz que se ve en la pantalla es el centro de la simulacion\n";
+	system("pause");
+}
+
+///////////////////////////////////////////////////
 
 // Lógica del juego de la vida
 void logica(matrizB* mat)
@@ -140,15 +168,6 @@ void logica(matrizB* mat)
 	}
 }
 
-// Actualizar el display y dibujar una carita al centro del mismo
-void actualizar_display(matrizB* mat) {
-	imprimir_mat(mat);
-	int x = (mat->ancho - mat->offSet) / 2;
-	int y = (mat->alto - mat->offSet) / 2;
-	gotoxy(x, y);
-	cout << (char)1;
-}
-
 // Guardar en un archivo lo que se tenga dibujado en la simulación
 void guardar_mat(matrizB* mat) {
 	ofstream output_file("drawing.txt");
@@ -177,23 +196,6 @@ void cargar_mat(matrizB* mat) {
 			}
 		}
 	}
-}
-
-//Menu con indicaciones
-void menu(int w, int h)
-{
-	gotoxy(w / 2 - 14, 0);
-	cout << "Bienvenido al simulador del";
-	gotoxy(w / 2 - 14, 1);
-	cout
-		<< "juego de la vida de Conway\n"
-		<< "Las reglas del juego son:\n"
-		<< "Cada punto blanco es una vida, esta puede tener mas vidas alrededor que seran sus vecinos\n"
-		<< "Si un punto tiene 3 vecinos y no existe algo en dicho punto, se creara vida\n"
-		<< "Si hay 2 o 3 vecinos cerca de un punto, este mantendra la vida que tenga\n"
-		<< "Si hay 0, 1, 4 o mas vecinos, se terminara con la vida en dicho punto\n"
-		<< "La cara feliz que se ve en la pantalla es el centro de la simulacion\n";
-	system("pause");
 }
 
 int main()
@@ -261,13 +263,13 @@ int main()
 			{
 				vida->matriz
 					[posCursorY + vida->offSet / 2]
-				[posCursorX + vida->offSet / 2] = true; // Colocar punto
+					[posCursorX + vida->offSet / 2] = true; // Colocar punto
 			}
 			if (GetKeyState('V') & 0x8000)
 			{
 				vida->matriz
 					[posCursorY + vida->offSet / 2]
-				[posCursorX + vida->offSet / 2] = false; // Quitar punto
+					[posCursorX + vida->offSet / 2] = false; // Quitar punto
 			}
 			if (GetKeyState('Q') & 0x8000)
 			{
