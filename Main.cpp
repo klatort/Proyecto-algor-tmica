@@ -58,7 +58,7 @@ void imprimir_mat(matrizB* mat, bool actividad = false)
 		for (int j = mat->offSet / 2; j < mat->ancho - (mat->offSet / 2); j++) {
 			if (mat->matriz[i][j] == 1)
 				auxPrint += (char)219;
-			else if (mat->matriz[i][j] == 0)
+			else
 				auxPrint += ' ';
 		}
 		auxPrint += '\n';
@@ -115,9 +115,6 @@ void logica(matrizB* mat)
 	bool** aux = new bool* [mat->alto];
 	for (int i = 0; i < mat->alto; i++) {
 		aux[i] = new bool[mat->ancho];
-		for (int j = 0; j < mat->ancho; j++) {
-			aux[i][j] = mat->matriz[i][j];
-		}
 	}
 
 	// Aplica la lógica de el juego de la vida
@@ -166,6 +163,10 @@ void logica(matrizB* mat)
 			mat->matriz[i][j] = aux[i][j];
 		}
 	}
+
+	for (int i = 0; i < mat->alto; i++)
+		delete[] aux[i];
+	delete[] aux;
 }
 
 // Guardar en un archivo lo que se tenga dibujado en la simulación
@@ -187,8 +188,8 @@ void cargar_mat(matrizB* mat) {
 		for (int j = mat->offSet / 2; j < mat->ancho - mat->offSet / 2; j++) {
 			if ((i - mat->offSet / 2) *
 				(mat->ancho - mat->offSet) +
-				(j - mat->offSet / 2) < aux.length())
-			{
+				(j - mat->offSet / 2) < aux.length())	// Verificar que el string sea más grande 
+			{											// que la matriz para evitar errores
 				mat->matriz[i][j] =
 					(int)aux.at((i - mat->offSet / 2) *
 						(mat->ancho - mat->offSet) +
